@@ -1,0 +1,88 @@
+﻿
+@{
+    ViewBag.Title = "FacebookShare";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<script src="//connect.facebook.net/en_US/all.js"></script>
+<div id='fb-root'></div>
+<div class="jumbotron">
+    <div class="hpanel">
+        <div class="panel-body center">
+            <div class="row">
+                <div class="col-lg-12" style="text-align: center;">
+                    <h2 style="font-weight: 400;font-size:30px">
+                        GET SOCIAL WITH US
+                    </h2>
+                    <h5>Share about your booking and get <span style="color: #FE8007">$5 off</span> your transaction now</h5>
+                    <br />
+                    <br />
+                    <div class="">
+                        <button class="btn btn-primary" onclick='postToFeed(); return false;'><i class="fa fa-facebook"></i> &nbsp;Click to share on Facebook</button>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <hr style="height: 5px; background: #FE8007; margin-bottom: 60px;" />
+        </div>
+    </div>
+</div>
+<br />
+
+
+
+<script type="text/javascript">
+        FB.init({
+
+            appId: "828805543842679", status: true, cookie: true
+
+        });
+
+        function postToFeed() {
+
+            // calling the API ...
+            var obj = {
+                method: 'feed',
+                //quote: 'Just booked a car repair with instaMek, the mechanics who come to your home/workplace! Check them out.',
+                hashtag: '#instaMek',
+                redirect_uri: 'http://localhost:3024',
+                link: 'http://localhost:3024',
+                picture: 'http://www.learnsharecorner.com/wp-content/uploads/2014/06/LSC1.png',
+                name: 'Try out LearnShareCorner for your application developement too.',
+                caption: 'learnsharecorner.com',
+                description: 'Many things to learn and explore.'
+            };
+
+            function callback(response) {
+                var userId = "22";
+                if (response && response.post_id) {
+                    $.ajax({
+                        url: "@Url.Action("UpdateSocialShareId", "Home")?userId=" + userId + "&socialId=" + response['post_id'],
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        type: "POST",
+                        success: function (response) {
+                            if (response.success) {
+                               alert('Thanks for sharing, that amount will be adjusted in your invoice!');
+                            } else {
+                                alert('Error -' + response.error);
+                            }
+                        },
+                        error: function (xhr, textStatus, error) {
+                            alert('Error - ' + error);
+                            if (typeof console == "object") {
+                                console.log(xhr.status + "," + xhr.responseText + "," + textStatus + "," + error);
+                            }
+                        }
+                    });
+                }
+            }
+
+            FB.ui(obj, callback);
+        }
+
+
+
+</script>
+
